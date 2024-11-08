@@ -5,47 +5,55 @@
 </template>
 
 <script setup>
-  // import { onMounted, nextTick } from "vue";
-  import * as fabric from "fabric";
-  const canvas = new fabric.Canvas(document.getElementById("myCanvas"));
-  // onMounted(() => {
-  //   nextTick(() => {
-  //     canvas = new fabric.Canvas("myCanvas", {
-  //       width: 500,
-  //       height: 500,
-  //       backgroundColor: "white",
-  //     });
-  //   });
-  // });
-  const demoImg = "https://fabricjs.github.io/assets/pug.jpg";
-  // const imgElement = new Image();
-  // imgElement.src = demoImg;
-  // const imgInstance = new fabric.Image(
-  //   "https://fabricjs.github.io/assets/pug.jpg",
-  //   {
-  //     left: 0,
-  //     top: 0,
-  //     width: 150,
-  //     height: 150,
-  //   }
-  // );
-  fabric.Image.fromURL(demoImg).then((img) => {
-    img.set({
-      dirty: true,
-      left: 0,
-      top: 0,
-      width: 150,
-      height: 150,
+  import { onMounted } from "vue";
+  import { fabric } from "fabric";
+  import "./photo";
+  import "./filter";
+
+  onMounted(() => {
+    fabric.textureSize = 1000;
+
+    fabric.filterBackend = new fabric.WebglFilterBackend();
+    fabric.isWebglSupported(fabric.textureSize);
+
+    const canvas = new fabric.Canvas(document.getElementById("myCanvas"), {
+      backgroundColor: "white",
+      enableRetinaScaling: true,
     });
-    canvas.add(img);
+
+    function resizeCanvas() {
+      canvas.setWidth(window.innerWidth);
+      canvas.setHeight(window.innerHeight);
+    }
+    resizeCanvas();
+    window.addEventListener("resize", () => resizeCanvas(), false);
+
+    const photo = new fabric.Photo(
+      "https://glcouduser-11a82.kxcdn.com/1/savedDesign/thumbnails/43955.jpeg",
+      {
+        left: canvas.getWidth() / 2,
+        top: canvas.getHeight() / 2,
+        originX: "center",
+        originY: "center",
+      }
+    );
+    canvas.add(photo);
+    canvas.setActiveObject(photo);
+
+    // const imgEl = document.createElement("img");
+    // imgEl.crossOrigin = "Anonymous";
+    // imgEl.src =
+    //   "https://glcouduser-11a82.kxcdn.com/1/savedDesign/thumbnails/43955.jpeg";
+    // imgEl.onload = () => {
+    //   const image = new fabric.Image(imgEl, {
+    //     scaleX: 0.5,
+    //     scaleY: 0.5,
+    //     angle: 15,
+    //     top: 60,
+    //     left: 300,
+    //   });
+    //   canvas.add(image);
+    // };
   });
-  // eslint-disable-next-line no-undef
-  // const imgInstance = new FabricImage(demoImg, {
-  //   left: 0,
-  //   top: 0,
-  //   width: 150,
-  //   height: 150,
-  // });
-  // canvas.add(imgInstance);
 </script>
 <style scoped></style>
